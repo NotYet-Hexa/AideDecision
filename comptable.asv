@@ -1,0 +1,3 @@
+function resultat = comptable(X)
+    resultat = X(0) *(
+end
