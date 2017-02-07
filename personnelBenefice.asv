@@ -1,14 +1,14 @@
-function [resultat,res] = comptable
+function resultat= personnelBenefice
     matrice1 = [18 5 0 5 0 10;
-           17 2 12 15 7 12;
-           8 1 11 0 10 25;
-           2 10 5 4 13 7;
-           15 0 8 7 10 15;
-           5 5 3 12 8 6;
-           13 3 5 8 10 7;
-           1 2 1 2 0 4;
-           2 1 1 5 2 1;
-           1 1 3 2 2 0];
+               17 2 12 15 7 12;
+               8 1 11 0 10 25;
+               2 10 5 4 13 7;
+               15 0 8 7 10 15;
+               5 5 3 12 8 6;
+               13 3 5 8 10 7;
+               1 2 1 2 0 4;
+               2 1 1 5 2 1;
+               1 1 3 2 2 0];
 
     matrice2 = [4800;
                 4800;
@@ -20,9 +20,9 @@ function [resultat,res] = comptable
                 350;
                 820;
                 485];
-
-    res = linprog(-1*benef,matrice1,matrice2,[],[],zeros(6,1), []);
-    resultat = (benef')*res;
+    res
+    res = linprog(gestionPersonnel,matrice1,matrice2,[],[],benef, []);
+    resultat = (gestionPersonnel')*res;
     res
 end
 
@@ -38,4 +38,6 @@ end
 function resultat = f(x1,x2,x3,x4,x5,x6,x7,v,p1,p2,p3)
     resultat = v-(2*p1+4*p2+1*p3)-(x1*1+x2*3+x3*1+x4*4+x5*2+x6*3+x7*1)/60;
 end
-
+function resultat = gestionPersonnel
+    resultat = [24;6;11;5;10;35];
+end

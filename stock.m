@@ -21,8 +21,8 @@ function resultat = stock
                 820;
                 485];
     [resultatAtelier, resAteltier] = atelier;
-    
-    res = linprog(gestionstock,matrice1,matrice2,[],[],resAteltier, []);
+    %faire graphique 0-1 pas 0.1 resAtelier
+    res = linprog(gestionstock,matrice1,matrice2,[],[],0.1*resAteltier, []);
     resultat = (gestionstock')*res;
     res
             
