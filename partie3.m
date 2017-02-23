@@ -1,5 +1,8 @@
-function resultat = partie3
-    resultat = preCleanMatrix;
+function [matDis,matConc] = partie3
+    matrice = preCleanMatrix;
+    matrice
+    matConc=matriceConcordance(matrice);
+    matDis=matriceDiscordance(matrice);
 end
 
 function matriceDisc = matriceDiscordance(matriceJug)
@@ -9,8 +12,14 @@ function matriceDisc = matriceDiscordance(matriceJug)
     for indexligne1  = 1:lsize 
         x1 = matriceJug(indexligne1,:);
         for indexligne2 = 1:(lsize)
-            x2 = matriceJug(indexligne2,:);
-            matriceDisc(indexligne2,indexligne1)=maxDifferenceVector(x1,x2)/10;
+            if indexligne2==indexligne1
+                matriceDisc(indexligne2,indexligne1)=NaN;
+            else
+                x2 = matriceJug(indexligne2,:);
+                matriceDisc(indexligne2,indexligne1)=maxDifferenceVector(x1,x2)/10;
+            end
+            
+            
         end 
     end 
 end
@@ -32,14 +41,18 @@ function matriceConc = matriceConcordance(matriceJug)
     for indexligne1  = 1:lsize 
         x1 = matriceJug(indexligne1,:);
         for indexligne2 = 1:(lsize)
-            x2 = matriceJug(indexligne2,:);
-            [compteur,~]= comparerDeuxVecteur(x1,x2);
-            matriceConc(indexligne2,indexligne1)=compteur/csize;
+            if indexligne2==indexligne1
+                matriceConc(indexligne2,indexligne1)=NaN;
+            else
+                x2 = matriceJug(indexligne2,:);
+                [compteur,~]= comparerDeuxVecteur(x1,x2);
+                matriceConc(indexligne2,indexligne1)=compteur/csize;
+            end
         end 
     end 
 end
 
-function matriceJuge = preCleanMatrix
+function matrice = preCleanMatrix
     %Vire ceux qui se font dominés
       matriceJug = [ 6 5 4 5 ;
                    5 2 6 7 ;
@@ -61,7 +74,6 @@ function matriceJuge = preCleanMatrix
                 end 
             end 
        end 
-       listeAJeter
        listeAJeter= unique(listeAJeter);
        [~,NbElement]=size(listeAJeter);
        matrice = zeros(nbrLigne - NbElement, nbrColonne);
@@ -79,7 +91,7 @@ function matriceJuge = preCleanMatrix
 end
 
 function [compteur,res] = comparerDeuxVecteur(Vecteur1, Vecteur2)
-    %renvoie True si toutes les éléments du vecteur 1 sont supp à ceux du
+    %renvoie 1 si toutes les éléments du vecteur 1 sont supp à ceux du
     %Vecteur 2
     [~,nbrelement]=size(Vecteur1);
     res=0;
@@ -91,7 +103,6 @@ function [compteur,res] = comparerDeuxVecteur(Vecteur1, Vecteur2)
     end
     if compteur == nbrelement && sum(Vecteur1)>sum(Vecteur2)
         res = 1;
-        res
     end 
 end 
 
