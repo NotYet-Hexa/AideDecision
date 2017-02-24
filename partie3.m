@@ -1,9 +1,9 @@
 function [matDis,matConc] = partie3
-    matrice = preCleanMatrix;
-    matrice
-    matConc=matriceConcordance(matrice);
-    matDis=matriceDiscordance(matrice);
-    test = ComparatifSeuil(matConc,matDis,0.7,0.5)
+    matriceX=remisePoid;
+    matrice = preCleanMatrix(matriceX);
+    matConc=matriceConcordance(matrice)
+    matDis=matriceDiscordance(matrice)
+    MatSeuil = ComparatifSeuil(matConc,matDis)
     
     
 end
@@ -45,16 +45,8 @@ function matriceConc = matriceConcordance(matriceJug)
     end 
 end
 
-function matrice = preCleanMatrix
+function matrice = preCleanMatrix(matriceJug)
     %Vire ceux qui se font dominés
-      matriceJug = [ 6 5 4 5 ;
-                   5 2 6 7 ;
-                   4 3 2 5 ;
-                   3 7 5 4 ;
-                   1 7 2 9 ;
-                   2 5 3 3 ;
-                   5 4 2 9 ;
-                   3 5 7 4 ];
         listeAJeter=[];
        [nbrLigne,nbrColonne]=size(matriceJug);
        for indexligne1  = 1:nbrLigne 
@@ -113,15 +105,51 @@ function max = maxDifferenceVector(vector1,vector2)
     
 end
 
-function matriceRes = ComparatifSeuil(matriceConcordance,matriceDiscordance,seuilC,seuilD)
+function matriceResultat = ComparatifSeuil(matriceConcordance,matriceDiscordance)
     [imax,jmax]=size(matriceConcordance);
     matriceRes = zeros(imax,jmax);
-    for indexLigne = 1:imax
-        for indexColonne = 1:jmax
-            if matriceConcordance(indexLigne,indexColonne)> seuilC && matriceDiscordance(indexLigne,indexColonne)<seuilD
-                matriceRes(indexLigne,indexColonne)=1;
+    for seuilC = 1:10
+        for seuilD=1:10
+            for indexLigne = 1:imax
+                for indexColonne = 1:jmax
+                    if matriceConcordance(indexLigne,indexColonne)> seuilC/10 && matriceDiscordance(indexLigne,indexColonne)<seuilD/10
+                        matriceRes(indexLigne,indexColonne)=1;
+                    end
+                end  
             end
+            for colonne = 1:jmax 
+                if isequal(matriceRes(:,colonne),zeros(imax,1)) && ~isequal(matriceRes,zeros(imax,jmax))
+                    matriceResultat=matriceRes;
+%                     display(matriceRes);
+%                     display(colonne)
+%                     display(seuilC)
+%                     display(seuilD)
+                end 
+            end 
         end 
-          
     end 
+end
+
+function matrice=remisePoid
+      matriceJug = [ 6 5 4 5 ;
+                   5 2 6 7 ;
+                   4 3 2 5 ;
+                   3 7 5 4 ;
+                   1 7 2 9 ;
+                   2 5 3 3 ;
+                   5 4 2 9 ;
+                   3 5 7 4 ];
+    [imax,jmax]=size(matriceJug);
+    matrice = zeros(imax,jmax);
+    for jcolonne = 1:jmax 
+        colonne=matriceJug(:,jcolonne);
+        for iligne = 1:imax
+            matrice(iligne,jcolonne)=changementEchelle(matriceJug(iligne,jcolonne),min(colonne),max(colonne),0,10);
+        end 
+        
+    end 
+end
+
+function y=changementEchelle(x,DebInt1,FinInt1,DebInt2,FinInt2)
+    y=x*(FinInt2-DebInt2)/(FinInt1-DebInt1)+(FinInt1*DebInt2-DebInt1*FinInt2)/(FinInt1-DebInt1);
 end

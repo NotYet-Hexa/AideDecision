@@ -3,6 +3,8 @@ function [matDis,matConc] = partie3
     matrice
     matConc=matriceConcordance(matrice);
     matDis=matriceDiscordance(matrice);
+    test = ComparatifSeuil(matConc,matDis);
+    
     
 end
 
@@ -111,14 +113,39 @@ function max = maxDifferenceVector(vector1,vector2)
     
 end
 
-function vecteurResultat = ComparatifSeuil(matriceConcordance,matriceDiscordance)
+function matriceRes = ComparatifSeuil(matriceConcordance,matriceDiscordance)
     [imax,jmax]=size(matriceConcordance);
-    for seuilC = min(matriceConcordance)*100:100
-        for seulD = min(matriceDiscordance)*100:100
-            for indexLigne 1:imax
-                for indexColonne 1:jmax
-                    
+    matriceRes = zeros(imax,jmax);
+    for seuilC = 1:10
+        for seuilD=1:10
+            for indexLigne = 1:imax
+                for indexColonne = 1:jmax
+                    if matriceConcordance(indexLigne,indexColonne)> seuilC/10 && matriceDiscordance(indexLigne,indexColonne)<seuilD/10
+                        matriceRes(indexLigne,indexColonne)=1;
+                    end
+                end  
             end
+            for colonne = 1:jmax 
+                if isequal(matriceRes(:,colonne),zeros(imax,1)) && ~isequal(matriceRes,zeros(imax,jmax))
+                    display(matriceRes);
+                    display(colonne)
+                end 
+            end 
+        end 
+    end 
+end
+
+function matrice=remisePoid(matriceDepart)
+    [imax,jmax]=size(matriceDepart);
+    for colonne = 1:jmax 
+        if max(matriceDepart)
+            
+        else if 
+            
         end
     end 
+end
+
+function y=changementEchelle(x,DebInt1,FinInt1,DebInt2,FinInt2)
+    y=x*(FinInt2-DebInt2)/(FinInt1-DebInt1)+(FinInt1*DebInt2-DebInt1*FinInt2)/(FinInt1-DebInt1);
 end
