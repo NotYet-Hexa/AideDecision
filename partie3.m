@@ -3,6 +3,9 @@ function [matDis,matConc] = partie3
     matrice
     matConc=matriceConcordance(matrice);
     matDis=matriceDiscordance(matrice);
+    test = ComparatifSeuil(matConc,matDis,0.7,0.5)
+    
+    
 end
 
 function matriceDisc = matriceDiscordance(matriceJug)
@@ -24,17 +27,7 @@ function matriceDisc = matriceDiscordance(matriceJug)
     end 
 end
 
-function max = maxDifferenceVector(vector1,vector2)
-    [~,nbrelement] = size(vector1);
-    max=0;
-    for index= 1:nbrelement
-        temp=vector1(index)-vector2(index);
-        if (temp>max)
-            max=temp;
-        end 
-    end
-    
-end
+
 function matriceConc = matriceConcordance(matriceJug)
     [lsize,csize]=size(matriceJug);
     matriceConc = zeros(lsize);
@@ -91,8 +84,10 @@ function matrice = preCleanMatrix
 end
 
 function [compteur,res] = comparerDeuxVecteur(Vecteur1, Vecteur2)
-    %renvoie 1 si toutes les éléments du vecteur 1 sont supp à ceux du
+    % res renvoie 1 si toutes les éléments du vecteur 1 sont supp à ceux du
     %Vecteur 2
+    %et le compteur sert à voir cb d'élement sont sup ou égaux
+    %(Pour la matrice de Concordance)
     [~,nbrelement]=size(Vecteur1);
     res=0;
     compteur=0;
@@ -106,3 +101,27 @@ function [compteur,res] = comparerDeuxVecteur(Vecteur1, Vecteur2)
     end 
 end 
 
+function max = maxDifferenceVector(vector1,vector2)
+    [~,nbrelement] = size(vector1);
+    max=0;
+    for index= 1:nbrelement
+        temp=vector1(index)-vector2(index);
+        if (temp>max)
+            max=temp;
+        end 
+    end
+    
+end
+
+function matriceRes = ComparatifSeuil(matriceConcordance,matriceDiscordance,seuilC,seuilD)
+    [imax,jmax]=size(matriceConcordance);
+    matriceRes = zeros(imax,jmax);
+    for indexLigne = 1:imax
+        for indexColonne = 1:jmax
+            if matriceConcordance(indexLigne,indexColonne)> seuilC && matriceDiscordance(indexLigne,indexColonne)<seuilD
+                matriceRes(indexLigne,indexColonne)=1;
+            end
+        end 
+          
+    end 
+end
