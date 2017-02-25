@@ -1,9 +1,25 @@
-function [matDis,matConc] = partie3
+function MatSeuil = partie3
+    matriceJug = [ 6 5 4 5 ;
+                   5 2 6 7 ;
+                   4 3 2 5 ;
+                   3 7 5 4 ;
+                   1 7 2 9 ;
+                   2 5 3 3 ;
+                   5 4 2 9 ;
+                   3 5 7 4 ];
     matriceX=remisePoid;
-    matrice = preCleanMatrix(matriceX);
-    matConc=matriceConcordance(matrice)
-    matDis=matriceDiscordance(matrice)
-    MatSeuil = ComparatifSeuil(matConc,matDis)
+    [matrice,sommets] = preCleanMatrix(matriceJug);
+    matConc=transpose(matriceConcordance(matrice));
+    matDis=matriceDiscordance(matrice);
+    [MatSeuil,bestC,bestD] = ComparatifSeuil(matConc,matDis);
+    G=biograph(MatSeuil,sommets);
+    view(G);
+%     disp(MatSeuil);
+%     disp(bestC);
+%     disp(bestD);
+%      matSeuil2=ComparatifSeuil2(matConc,matDis,99,1)
+   
+    
     
     
 end
@@ -45,8 +61,10 @@ function matriceConc = matriceConcordance(matriceJug)
     end 
 end
 
-function matrice = preCleanMatrix(matriceJug)
+function [matrice,sommets] = preCleanMatrix(matriceJug)
     %Vire ceux qui se font dominés
+        ids = {'Proposition A','Proposition B','Proposition C','Proposition D','Proposition E','Proposition F','Proposition G','Proposition H'};
+        sommets=ids(:);
         listeAJeter=[];
        [nbrLigne,nbrColonne]=size(matriceJug);
        for indexligne1  = 1:nbrLigne 
@@ -72,7 +90,10 @@ function matrice = preCleanMatrix(matriceJug)
             end 
             indexAncienneMatrice=indexAncienneMatrice+1;
        end 
-       
+       for indexAjeter = 1:NbElement
+            IndexElement =listeAJeter(indexAjeter)  - abs(length(sommets)-length(ids));
+            sommets(IndexElement)=[];
+       end
 end
 
 function [compteur,res] = comparerDeuxVecteur(Vecteur1, Vecteur2)
@@ -105,21 +126,30 @@ function max = maxDifferenceVector(vector1,vector2)
     
 end
 
-function matriceResultat = ComparatifSeuil(matriceConcordance,matriceDiscordance)
+function [matriceResultat,meilleurSeuilC,meilleurSeuilD] = ComparatifSeuil(matriceConcordance,matriceDiscordance)
     [imax,jmax]=size(matriceConcordance);
-    matriceRes = zeros(imax,jmax);
-    for seuilC = 1:10
-        for seuilD=1:10
+    matriceResultat=zeros(imax,jmax);
+    listeSeuilD=[];
+    listeSeuilC=[];
+    compteur = 0;
+    for seuilD = 0:100
+        for seuilC=0:100
+            matriceRes = zeros(imax,jmax);
             for indexLigne = 1:imax
                 for indexColonne = 1:jmax
-                    if matriceConcordance(indexLigne,indexColonne)> seuilC/10 && matriceDiscordance(indexLigne,indexColonne)<seuilD/10
+                    if (matriceConcordance(indexLigne,indexColonne)> (seuilC/100)) && (matriceDiscordance(indexColonne,indexLigne)<(seuilD/100)) && (indexLigne~=indexColonne)
                         matriceRes(indexLigne,indexColonne)=1;
                     end
-                end  
+                end
+                
             end
             for colonne = 1:jmax 
-                if isequal(matriceRes(:,colonne),zeros(imax,1)) && ~isequal(matriceRes,zeros(imax,jmax))
+                if isequal(matriceRes(:,colonne),zeros(imax,1)) && ~isequal(matriceRes,zeros(imax,jmax)) 
+                    compteur = compteur +1 ;
                     matriceResultat=matriceRes;
+                    listeSeuilD=[listeSeuilD seuilD];
+                    listeSeuilC=[listeSeuilC seuilC];
+                    
 %                     display(matriceRes);
 %                     display(colonne)
 %                     display(seuilC)
@@ -127,8 +157,33 @@ function matriceResultat = ComparatifSeuil(matriceConcordance,matriceDiscordance
                 end 
             end 
         end 
+    end
+   [meilleurSeuilC,meilleurSeuilD] = meilleurSeuil(listeSeuilC,listeSeuilD);
+end
+function matriceResultat = ComparatifSeuil2(matriceConcordance,matriceDiscordance,seuilC,seuilD)
+    [imax,jmax]=size(matriceConcordance);
+    matriceResultat=zeros(imax,jmax);
+    matriceRes = zeros(imax,jmax);
+    for indexLigne = 1:imax
+        for indexColonne = 1:jmax
+            if (matriceConcordance(indexLigne,indexColonne)> (seuilC/100)) && (matriceDiscordance(indexColonne,indexLigne)<(seuilD/100)) && (indexLigne~=indexColonne)
+                matriceRes(indexLigne,indexColonne)=1;
+            end
+        end
+
+    end
+    for colonne = 1:jmax 
+        if isequal(matriceRes(:,colonne),zeros(imax,1)) && ~isequal(matriceRes,zeros(imax,jmax)) 
+            matriceResultat=matriceRes;
+
+%                     display(matriceRes);
+%                     display(colonne)
+%                     display(seuilC)
+%                     display(seuilD)
+        end 
     end 
 end
+
 
 function matrice=remisePoid
       matriceJug = [ 6 5 4 5 ;
@@ -153,3 +208,22 @@ end
 function y=changementEchelle(x,DebInt1,FinInt1,DebInt2,FinInt2)
     y=x*(FinInt2-DebInt2)/(FinInt1-DebInt1)+(FinInt1*DebInt2-DebInt1*FinInt2)/(FinInt1-DebInt1);
 end
+
+function [meilleurSeuilC,meilleurSeuilD]=meilleurSeuil(vectSeuilC,vectSeuilD)
+    meilleurSeuilC = 0;
+    meilleurSeuilD = 0;
+    compteur1=50;
+    for index1 = 1:50
+
+        compteur2=50;
+        
+        for index2 = 1:50
+            if ismember(compteur1,vectSeuilC)&& ismember(compteur2,vectSeuilD)
+                meilleurSeuilC=compteur2;
+                meilleurSeuilD=compteur1;
+            end 
+            compteur2=compteur2 + 1;
+        end
+        compteur1 = compteur1 -1;
+    end
+end 
