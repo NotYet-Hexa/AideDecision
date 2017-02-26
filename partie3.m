@@ -3,9 +3,7 @@ function [matDis,matConc] = partie3
     matrice
     matConc=matriceConcordance(matrice);
     matDis=matriceDiscordance(matrice);
-    test = ComparatifSeuil(matConc,matDis,0.7,0.5)
-    
-    
+    test = ComparatifSeuil(matConc, matDis, 0.7, 0.5)
 end
 
 function matriceDisc = matriceDiscordance(matriceJug)
@@ -16,13 +14,11 @@ function matriceDisc = matriceDiscordance(matriceJug)
         x1 = matriceJug(indexligne1,:);
         for indexligne2 = 1:(lsize)
             if indexligne2==indexligne1
-                matriceDisc(indexligne2,indexligne1)=NaN;
+                matriceDisc(indexligne2, indexligne1) = NaN;
             else
                 x2 = matriceJug(indexligne2,:);
-                matriceDisc(indexligne2,indexligne1)=maxDifferenceVector(x1,x2)/10;
+                matriceDisc(indexligne2, indexligne1) = maxDifferenceVector(x1,x2)/10;
             end
-            
-            
         end 
     end 
 end
@@ -35,18 +31,18 @@ function matriceConc = matriceConcordance(matriceJug)
         x1 = matriceJug(indexligne1,:);
         for indexligne2 = 1:(lsize)
             if indexligne2==indexligne1
-                matriceConc(indexligne2,indexligne1)=NaN;
+                matriceConc(indexligne2,indexligne1) = NaN;
             else
                 x2 = matriceJug(indexligne2,:);
                 [compteur,~]= comparerDeuxVecteur(x1,x2);
-                matriceConc(indexligne2,indexligne1)=compteur/csize;
+                matriceConc(indexligne2,indexligne1) = compteur/csize;
             end
         end 
     end 
 end
 
 function matrice = preCleanMatrix
-    %Vire ceux qui se font dominés
+    % Vire ceux qui se font dominï¿½s
       matriceJug = [ 6 5 4 5 ;
                    5 2 6 7 ;
                    4 3 2 5 ;
@@ -84,10 +80,10 @@ function matrice = preCleanMatrix
 end
 
 function [compteur,res] = comparerDeuxVecteur(Vecteur1, Vecteur2)
-    % res renvoie 1 si toutes les éléments du vecteur 1 sont supp à ceux du
-    %Vecteur 2
-    %et le compteur sert à voir cb d'élement sont sup ou égaux
-    %(Pour la matrice de Concordance)
+    % res renvoie 1 si toutes les Ã©lÃ©ments du vecteur 1 sont supp Ã  ceux du
+    % Vecteur 2
+    % et le compteur sert Ã  voir cb d'Ã©lement sont sup ou Ã©gaux
+    % (Pour la matrice de Concordance)
     [~,nbrelement]=size(Vecteur1);
     res=0;
     compteur=0;
@@ -110,7 +106,6 @@ function max = maxDifferenceVector(vector1,vector2)
             max=temp;
         end 
     end
-    
 end
 
 function matriceRes = ComparatifSeuil(matriceConcordance,matriceDiscordance,seuilC,seuilD)
@@ -121,7 +116,6 @@ function matriceRes = ComparatifSeuil(matriceConcordance,matriceDiscordance,seui
             if matriceConcordance(indexLigne,indexColonne)> seuilC && matriceDiscordance(indexLigne,indexColonne)<seuilD
                 matriceRes(indexLigne,indexColonne)=1;
             end
-        end 
-          
+        end
     end 
 end

@@ -23,5 +23,6 @@ function [resultat,res] = atelier
     somme = - 1 *ones(6,1);
     res = linprog(somme,matrice1,matrice2,[],[],zeros(6,1), []);
     resultat = sum(res);
+    res
 end
 

@@ -8,24 +8,37 @@ function resultat = stock
            13 3 5 8 10 7;
            1 2 1 2 0 4;
            2 1 1 5 2 1;
-           1 1 3 2 2 0];
+           1 1 3 2 2 0;
+           -1 -1 -1 -1 -1 -1];
+     vectorX = zeros(6,1);
+     vectorY = zeros(6,1);
+    for i = 1:100
+        matrice2 = [4800;
+                    4800;
+                    4800;
+                    4800;
+                    4800;
+                    4800;
+                    4800;
+                    350;
+                    820;
+                    485;
+                    -i*389/100];
+    
 
-    matrice2 = [4800;
-                4800;
-                4800;
-                4800;
-                4800;
-                4800;
-                4800;
-                350;
-                820;
-                485];
-    [resultatAtelier, resAteltier] = atelier;
-    %faire graphique 0-1 pas 0.1 resAtelier
-    res = linprog(gestionstock,matrice1,matrice2,[],[],0.1*resAteltier, []);
-    resultat = (gestionstock')*res;
-    res
-            
+        [~, resAteltier] = atelier;
+        %faire graphique 0-1 pas 0.1 resAtelier
+        res = linprog(gestionstock,matrice1,matrice2,[],[],zeros(6,1));
+        resultat = (gestionstock')*res;
+        vectorY(i)=resultat;
+        if i==80
+            res
+            resultat
+        end
+        vectorX(i)=i*389/100;
+
+     end
+     plot(vectorX,vectorY);
 end
 
 function resultat = gestionstock
